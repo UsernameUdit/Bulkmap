@@ -24,14 +24,14 @@ def extd(path):
     print(result.stdout)
     data = json.loads(result.stdout)
     date_str = (data[0]["DateTimeOriginal"])
+    if date_str== None:
+        print("fallback")
+        exit()
     text = date_str.replace(" ","_").replace(":","")
     return text
 
 def rename(file_path,text):
-    pass
-
-
-
+    file_path.rename(file_path.with_name(text+file_path.suffix))
 
 path = get_input_path()
 time= extd(path)
