@@ -6,6 +6,15 @@ from pathlib import Path
 from rich.console import Console
 from rich.text import Text
 
+
+console = Console()
+art = figlet_format("Bulkmap", font="slant")
+
+text = Text(art)
+text.stylize("bold rgb(220,0,0) on rgb(0,0,0)")
+console.print(text)
+console.print("Welcome to [italic red]Bulkmap[/italic red] \n")
+
 def get_input_path():
     c = q.text("Enter full path of the folder").ask()
     file_path = Path(c)
@@ -35,13 +44,8 @@ def extd(path):
         if date_str is None:
             print(f"No date found for {a.name}, skipping")
             continue
-        if date_str == 'FileCreateDate':
-            text = date_str.split('+')[0]
-            text = date_str.replace(" ","_").replace(":","")
-        else:
-            text = date_str.replace(" ","_").replace(":","")
+        text = date_str.split('+')[0].replace(" ","_").replace(":","")
         a.rename(a.with_name(text+a.suffix))
-    
 
 path = get_input_path()
 time = extd(path)

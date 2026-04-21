@@ -10,4 +10,4 @@
   
 </p>
 
-Bulk file sorter and renamer by date
+I am too lazy to write this readme it is cool it works thats it 
