@@ -5,6 +5,8 @@ import questionary as q
 from pathlib import Path
 from rich.console import Console
 from rich.text import Text
+# from concurrent.futures import ThreadPoolExecutor
+# import time will deal with concurrency once I complete this 
 
 
 console = Console()
@@ -28,6 +30,9 @@ def get_input_path():
     return file_path
 
 def extd(path):
+    IMAGE_FORMATS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".raw"}
+    VIDEO_FORMATS = {".mp4", ".mov", ".avi", ".mkv"}
+    DOCUMENT_FORMATS = {".pdf", ".docx", ".txt"}
     for item in path.iterdir():
         a = item.resolve()
         if not a.is_file():
@@ -36,17 +41,30 @@ def extd(path):
         result = sb.run(command,shell = False,capture_output=True,text=True)
         print(result.stdout)
         data = json.loads(result.stdout)
-        date_str = (
-            data[0].get("DateTimeOriginal") or 
-            data[0].get("CreateDate") or 
-            data[0].get("ModifyDate") or
-            data[0].get("FileCreateDate"))
-        if date_str is None:
-            print(f"No date found for {a.name}, skipping")
+        suffix = a.suffix.lower()
+
+        if suffix in IMAGE_FORMATS:
+            date_str = (
+                        data[0].get("DateTimeOriginal") or
+                        data[0].get("CreateDate") or
+                        data[0].get("FileCreateDate"))
+
+        elif suffix in VIDEO_FORMATS:
+            date_str = (
+                        data[0].get("FileCreateDate"))
+        elif suffix in DOCUMENT_FORMATS:
+            date_str = data[0].get("FileCreateDate")
+        else:
+            print(f"Unsupported format {a.name}, skipping")
             continue
         text = date_str.split('+')[0].replace(" ","_").replace(":","")
-        a.rename(a.with_name(text+a.suffix))
-
+        new_path = a.with_name(text + a.suffix)
+        counter = 1
+        while new_path.exists():
+            new_path = a.with_name(f"{text}_{counter}{a.suffix}")
+            counter += 1
+        a.rename(new_path)
+        
 path = get_input_path()
 time = extd(path)
 
