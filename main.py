@@ -33,7 +33,7 @@ def extd(path):
     IMAGE_FORMATS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".raw"}
     VIDEO_FORMATS = {".mp4", ".mov", ".avi", ".mkv"}
     DOCUMENT_FORMATS = {".pdf", ".docx", ".txt"}
-    for item in path.iterdir():
+    for item in path.rglob('*'):
         a = item.resolve()
         if not a.is_file():
             continue
