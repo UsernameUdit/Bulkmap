@@ -1,5 +1,6 @@
 import subprocess as sb
 import json
+import os
 from pyfiglet import figlet_format
 import questionary as q
 from pathlib import Path
@@ -7,6 +8,8 @@ from rich.console import Console
 from rich.text import Text
 # from concurrent.futures import ThreadPoolExecutor
 # import time will deal with concurrency once I complete this 
+
+
 
 
 console = Console()
@@ -18,6 +21,11 @@ console.print(text)
 console.print("Welcome to [italic red]Bulkmap[/italic red] \n")
 
 def get_input_path():
+    dangerous_dir = [Path("C:/"),
+    Path("C:/Users"),
+    Path("C:/Windows"),
+    Path("C:/Program Files"),
+    Path(os.path.expanduser("~"))]
     c = q.text("Enter full path of the folder").ask()
     file_path = Path(c)
 
@@ -26,8 +34,12 @@ def get_input_path():
     else:
         print(f"The path '{file_path}' does not exist.")
         exit()
+    if file_path in dangerous_dir:
+        print("Warning:System Directory Exiting.......")
+        exit()
+    else:
+        return file_path
 
-    return file_path
 
 def extd(path):
     IMAGE_FORMATS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".raw"}
