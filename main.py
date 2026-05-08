@@ -9,12 +9,8 @@ from rich.text import Text
 # from concurrent.futures import ThreadPoolExecutor
 # import time will deal with concurrency once I complete this 
 
-
-
-
 console = Console()
 art = figlet_format("Bulkmap", font="slant")
-
 text = Text(art)
 text.stylize("bold rgb(220,0,0) on rgb(0,0,0)")
 console.print(text)
@@ -37,8 +33,7 @@ def get_input_path():
     if file_path in dangerous_dir:
         print("Warning:System Directory Exiting.......")
         exit()
-    else:
-        return file_path
+    return file_path
 
 
 def extd(path):
@@ -49,6 +44,15 @@ def extd(path):
         a = item.resolve()
         if not a.is_file():
             continue
+        file_count = sum(1 for a in path.rglob("*") if a.is_file())
+        print(f"Bulkmap found {file_count} files")
+        if (file_count > 5000):
+            answer = input("Warning there are more than 5000 files in this directory Do you want to continue? (y/n): ").lower().strip()
+            if answer in ['y', 'yes']:
+                print("Continuing...")
+            else:
+                print("Exiting...")
+                exit()
         command = ["exiftool", "-j", "-AllDates", "-FileCreateDate", str(a)]
         result = sb.run(command,shell = False,capture_output=True,text=True)
         print(result.stdout)
