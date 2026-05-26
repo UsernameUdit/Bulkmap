@@ -1,8 +1,8 @@
 import subprocess as sb
 import json
 import os
+import json
 from pyfiglet import figlet_format
-import questionary as q
 from pathlib import Path
 from rich.console import Console
 from rich.text import Text
@@ -22,7 +22,7 @@ def get_input_path():
     Path("C:/Windows"),
     Path("C:/Program Files"),
     Path(os.path.expanduser("~"))]
-    c = q.text("Enter full path of the folder").ask()
+    c = input("Enter full path of the folder")
     file_path = Path(c)
 
     if file_path.exists():
