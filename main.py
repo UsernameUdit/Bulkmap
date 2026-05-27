@@ -3,6 +3,7 @@ import json
 import os
 import json
 from pyfiglet import figlet_format
+from datetime import datetime
 from pathlib import Path
 from rich.console import Console
 from rich.text import Text
@@ -22,7 +23,7 @@ def get_input_path():
     Path("C:/Windows"),
     Path("C:/Program Files"),
     Path(os.path.expanduser("~"))]
-    c = input("Enter full path of the folder")
+    c = console.input("[bold red]Enter full path of the folder:[/] ")
     file_path = Path(c)
 
     if file_path.exists():
@@ -40,25 +41,26 @@ def extd(path):
     IMAGE_FORMATS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".raw"}
     VIDEO_FORMATS = {".mp4", ".mov", ".avi", ".mkv"}
     DOCUMENT_FORMATS = {".pdf", ".docx", ".txt"}
-    for item in path.rglob('*'):
-        a = item.resolve()
-        if not a.is_file():
-            continue
-        file_count = sum(1 for a in path.rglob("*") if a.is_file())
-        print(f"Bulkmap found {file_count} files")
-        if (file_count > 5000):
+    log = []
+    file_count = sum(1 for a in path.rglob("*") if a.is_file())
+    print(f"Bulkmap found {file_count} files")
+    if (file_count > 5000):
             answer = input("Warning there are more than 5000 files in this directory Do you want to continue? (y/n): ").lower().strip()
             if answer in ['y', 'yes']:
                 print("Continuing...")
             else:
                 print("Exiting...")
                 exit()
-        command = ["exiftool", "-j", "-AllDates", "-FileCreateDate", str(a)]
+    for item in path.rglob('*'):
+        a = item.resolve()
+        if not a.is_file():
+            continue
+        command = ["exiftool", "-j", "-AllDates", "-FileCreateDate", "-filename", str(a)]
         result = sb.run(command,shell = False,capture_output=True,text=True)
         print(result.stdout)
         data = json.loads(result.stdout)
         suffix = a.suffix.lower()
-
+    
         if suffix in IMAGE_FORMATS:
             date_str = (
                         data[0].get("DateTimeOriginal") or
@@ -80,7 +82,19 @@ def extd(path):
             new_path = a.with_name(f"{text}_{counter}{a.suffix}")
             counter += 1
         a.rename(new_path)
-        
+        log.append({"original": str(a), "new_name": text + a.suffix})
+    return log
+
+
+def log_writer(log_entries,out_dir):
+    folder_name = out_dir.name
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_path = out_dir / f"bulkmap_{folder_name}_{timestamp}.json"
+    with open(log_path,"w") as f:
+        json.dump(log_entries,f,indent=4)
+
+
 path = get_input_path()
-time = extd(path)
+log = extd(path)
+log_writer(log,path)
 
