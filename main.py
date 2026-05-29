@@ -1,7 +1,6 @@
 import subprocess as sb
 import json
 import os
-import json
 import argparse
 from pyfiglet import figlet_format
 from datetime import datetime
@@ -103,7 +102,8 @@ def log_writer(log_entries,out_dir):
         json.dump(log_entries,f,indent=4)
 
 
-path = get_input_path()
-log = extd(path)
-log_writer(log,path)
+if __name__ == "__main__":
+    path = get_input_path()
+    log = extd(path)
+    log_writer(log, path)
 
