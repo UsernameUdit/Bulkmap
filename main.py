@@ -2,6 +2,7 @@ import subprocess as sb
 import json
 import os
 import json
+import argparse
 from pyfiglet import figlet_format
 from datetime import datetime
 from pathlib import Path
@@ -16,6 +17,11 @@ text = Text(art)
 text.stylize("bold rgb(220,0,0) on rgb(0,0,0)")
 console.print(text)
 console.print("Welcome to [italic red]Bulkmap[/italic red] \n")
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--dry-run", help="Preview changes without renaming files",action = 'store_true')
+args = parser.parse_args()
+
 
 def get_input_path():
     dangerous_dir = [Path("C:/"),
