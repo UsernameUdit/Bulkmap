@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from rich.console import Console
 from rich.text import Text
+from rich.progress import track
 # from concurrent.futures import ThreadPoolExecutor
 # import time will deal with concurrency once I complete this 
 
@@ -57,13 +58,12 @@ def extd(path):
             else:
                 print("Exiting...")
                 exit()
-    for item in path.rglob('*'):
+    for item in track(path.rglob('*'),description="Progress"):     
         a = item.resolve()
         if not a.is_file():
             continue
-        command = ["exiftool", "-j", "-AllDates", "-FileCreateDate", "-filename", str(a)]
+        command = ["exiftool", "-j","-q", "-AllDates", "-FileCreateDate", "-filename", str(a)]
         result = sb.run(command,shell = False,capture_output=True,text=True)
-        print(result.stdout)
         data = json.loads(result.stdout)
         suffix = a.suffix.lower()
     
@@ -87,7 +87,10 @@ def extd(path):
         while new_path.exists():
             new_path = a.with_name(f"{text}_{counter}{a.suffix}")
             counter += 1
-        a.rename(new_path)
+        if args.dry_run:
+            print(f"{a.name} → {new_path.name}")
+        else:
+            a.rename(new_path)
         log.append({"original": str(a), "new_name": text + a.suffix})
     return log
 
