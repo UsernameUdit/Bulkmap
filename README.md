@@ -6,14 +6,14 @@ A solution for a problem that don't exist renaming your file names to their date
 
 # Working
 
-Bulkmap validates your filepath, count the number of files in a folder and subfolders give the filepath to exiftool to extract their creation date in json file format and writes a json log about each file what was its original name and new name. if you don't want to change filenames you can use the '--dry-run' flag to generate a json log file.
+Bulkmap validates your filepath, count the number of files in a folder and subfolders give the filepath to exiftool to extract their creation date in json file format and writes a json log about each file what was its original name and new name. if you don't want to change filenames you can use the `--dry-run` flag to generate a json log file.
 
 # Sauce
 Install exiftool from www.exiftool.org
 
 1. Requirements
-   '''pip install -r requirements.txt'''
+   ```pip install -r requirements.txt```
 2. Running the script
-   ''' python3 main.py'''
+   ```python3 main.py```
 3. for dryrun
-   '''python3 main.py --dry-run'''
+   ```python3 main.py --dry-run```
